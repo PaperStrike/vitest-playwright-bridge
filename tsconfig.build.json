@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./build",
+    "rootDir": "./src",
+    "tsBuildInfoFile": "./build/.cache/build.tsbuildinfo"
+  },
+  "include": [
+    "./src/*"
+  ],
+  "references": [
+    { "path": "./src/browser" },
+    { "path": "./src/plugin" },
+    { "path": "./src/shared" }
+  ]
+}

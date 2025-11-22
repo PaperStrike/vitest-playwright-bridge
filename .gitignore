@@ -1,0 +1,24 @@
+# Mac and Windows
+.DS_Store
+desktop.ini
+
+# IntelliJ
+.idea/
+
+# Node
+node_modules/
+
+# Generate in development
+.nyc_output/
+coverage/
+build/
+dist/
+test-results/
+*.tsbuildinfo
+/*.tgz
+/*.zip
+/*.7z
+
+# Sensitive
+*.local.*
+*.bak

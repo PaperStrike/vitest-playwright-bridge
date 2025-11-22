@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../build/plugin",
+    "types": ["node"],
+    "tsBuildInfoFile": "../../build/.cache/plugin.tsbuildinfo"
+  },
+  "include": ["./"],
+  "references": [
+    { "path": "../shared" }
+  ]
+}

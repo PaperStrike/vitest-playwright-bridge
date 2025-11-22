@@ -1,0 +1,10 @@
+{
+  "editor.tabSize": 2,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.fixAll.eslint": "explicit"
+  },
+  "cSpell.words": [
+    "birpc"
+  ]
+}
