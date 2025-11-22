@@ -1,4 +1,6 @@
 # vitest-playwright-bridge
+[![npm Package](https://img.shields.io/npm/v/vitest-playwright-bridge?logo=npm "vitest-playwright-bridge")](https://www.npmjs.com/package/vitest-playwright-bridge)
+
 Bridge to interact with Playwright directly from Vitest browser tests, enabling advanced browser control and access to Playwright features. It provides utilities like `pageHandle`, which allow direct interaction with the Playwright [`Page`](https://playwright.dev/docs/api/class-page) object.
 
 ## Example
