@@ -4,13 +4,14 @@ import { createBirpc } from 'birpc'
 import { serialize, deserialize, type SerializableValue } from '../shared/serializer'
 import { getBridgeWebSocketPath, getCommonHandleIds } from '../shared/utils'
 import HostHandle from './handle'
-import createRouteController, { type RouteHandlerCallback, type RouteMatcher, type RouteOptions, type UnrouteAllOptions } from './route'
+import createRouteController, { type Route, type RouteHandlerCallback, type RouteMatcher, type RouteOptions, type UnrouteAllOptions } from './route'
 import type { BridgeClientRpc } from './types'
 
 export type {
   HostHandle,
-  RouteMatcher,
+  Route,
   RouteHandlerCallback,
+  RouteMatcher,
   RouteOptions,
   UnrouteAllOptions,
 }
