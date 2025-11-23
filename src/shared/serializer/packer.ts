@@ -54,7 +54,7 @@ addExtension({
   Class: Handle,
   type: BridgeMessageExtensionType.Handle,
   write(handle: Handle) {
-    return handle.id
+    return handle._id
   },
   read(id: string) {
     if (!currentTargetMap) {
@@ -71,7 +71,7 @@ addExtension({
   Class: PendingHandle,
   type: BridgeMessageExtensionType.PendingHandle,
   write(handle: PendingHandle) {
-    return handle.id
+    return handle._id
   },
   read(id: string) {
     if (!createHandle) {

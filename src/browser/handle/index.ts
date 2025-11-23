@@ -18,12 +18,12 @@ export default class HostHandle<T = unknown> extends Handle {
   /** @internal */
   public constructor(
     id: string,
-    private readonly rpc: BridgeClientRpc,
-    private readonly persist = false,
+    private readonly _rpc: BridgeClientRpc,
+    private readonly _persist = false,
   ) {
     super(id)
 
-    finalizationRegistry.register(this, { id, rpc }, this)
+    finalizationRegistry.register(this, { id, rpc: _rpc }, this)
   }
 
   public evaluate<R, Arg, O extends T = T>(nodeFunction: NodeFunctionOn<O, Arg, R>, arg: Arg): Promise<R>
@@ -31,9 +31,9 @@ export default class HostHandle<T = unknown> extends Handle {
 
   @hideInternals
   public evaluate<R, Arg, O>(nodeFunction: NodeFunctionOn<O, Arg, R>, arg: Arg) {
-    return this.rpc
+    return this._rpc
       .handleEvaluate(
-        this.id,
+        this._id,
         String(nodeFunction),
         arg,
       )
@@ -50,8 +50,8 @@ export default class HostHandle<T = unknown> extends Handle {
 
   @hideInternals
   public evaluateHandle<R, Arg, O>(nodeFunction: NodeFunctionOn<O, Arg, R>, arg: Arg) {
-    return this.rpc.handleEvaluateHandle(
-      this.id,
+    return this._rpc.handleEvaluateHandle(
+      this._id,
       String(nodeFunction),
       arg,
     )
@@ -59,26 +59,26 @@ export default class HostHandle<T = unknown> extends Handle {
 
   @hideInternals
   public async jsonValue(): Promise<T> {
-    return await this.rpc.handleJsonValue(this.id) as T
+    return await this._rpc.handleJsonValue(this._id) as T
   }
 
-  private disposed = false
+  private _disposed = false
 
   @hideInternals
   public async dispose(): Promise<void> {
-    if (this.disposed || this.persist) return
-    await this.rpc.handleDispose(this.id)
+    if (this._disposed || this._persist) return
+    await this._rpc.handleDispose(this._id)
     finalizationRegistry.unregister(this)
-    this.disposed = true
+    this._disposed = true
   }
 
   @hideInternals
   public getProperties(): Promise<Map<string, HostHandle>> {
-    return this.rpc.handleGetProperties(this.id)
+    return this._rpc.handleGetProperties(this._id)
   }
 
   @hideInternals
   public getProperty(propertyName: string): Promise<HostHandle> {
-    return this.rpc.handleGetProperty(this.id, propertyName)
+    return this._rpc.handleGetProperty(this._id, propertyName)
   }
 }

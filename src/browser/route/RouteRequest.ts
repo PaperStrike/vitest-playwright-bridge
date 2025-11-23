@@ -7,51 +7,51 @@ import type { FallbackOverrides } from './Route'
 export default class RouteRequest {
   /** @internal */
   public constructor(
-    private readonly requestDetails: Unboxed<BridgeRouteClientRequestDetails, HostHandle>,
+    private readonly _requestDetails: Unboxed<BridgeRouteClientRequestDetails, HostHandle>,
   ) {
   }
 
-  private fallbackOverrides: FallbackOverrides = {}
+  private _fallbackOverrides: FallbackOverrides = {}
 
   /**
    * @internal
    */
-  public applyFallbackOverrides(overrides?: FallbackOverrides) {
-    this.fallbackOverrides = { ...this.fallbackOverrides, ...overrides }
+  public _applyFallbackOverrides(overrides?: FallbackOverrides) {
+    this._fallbackOverrides = { ...this._fallbackOverrides, ...overrides }
   }
 
   /**
    * @internal
    */
-  public fallbackOverridesForContinue() {
-    return this.fallbackOverrides
+  public _fallbackOverridesForContinue() {
+    return this._fallbackOverrides
   }
 
-  private cachedAllHeaders: Record<string, string> | undefined
+  private _cachedAllHeaders: Record<string, string> | undefined
 
   public allHeaders() {
-    if (this.fallbackOverrides.headers) {
-      return this.fallbackOverrides.headers
+    if (this._fallbackOverrides.headers) {
+      return this._fallbackOverrides.headers
     }
 
-    if (!this.cachedAllHeaders) {
-      this.cachedAllHeaders = {}
-      for (const { name, value } of this.requestDetails.headersArray) {
+    if (!this._cachedAllHeaders) {
+      this._cachedAllHeaders = {}
+      for (const { name, value } of this._requestDetails.headersArray) {
         const lowerName = name.toLowerCase()
-        this.cachedAllHeaders[lowerName] = this.cachedAllHeaders[lowerName]
-          ? `${this.cachedAllHeaders[lowerName]},${value}`
+        this._cachedAllHeaders[lowerName] = this._cachedAllHeaders[lowerName]
+          ? `${this._cachedAllHeaders[lowerName]},${value}`
           : value
       }
     }
 
-    return this.cachedAllHeaders
+    return this._cachedAllHeaders
   }
 
   public frame() {
-    if (this.requestDetails.frame === null) {
+    if (this._requestDetails.frame === null) {
       throw new Error('Service Worker requests do not have an associated frame')
     }
-    return this.requestDetails.frame as HostHandle<playwright.Frame>
+    return this._requestDetails.frame as HostHandle<playwright.Frame>
   }
 
   public headerValue(name: string) {
@@ -59,30 +59,30 @@ export default class RouteRequest {
   }
 
   public headersArray() {
-    if (this.fallbackOverrides.headers) {
-      return Object.entries(this.fallbackOverrides.headers)
+    if (this._fallbackOverrides.headers) {
+      return Object.entries(this._fallbackOverrides.headers)
         .map(([name, value]) => ({ name, value }))
     }
 
-    return this.requestDetails.headersArray
+    return this._requestDetails.headersArray
   }
 
   public isNavigationRequest() {
-    return this.requestDetails.isNavigationRequest
+    return this._requestDetails.isNavigationRequest
   }
 
   public method() {
-    return this.fallbackOverrides.method ?? this.requestDetails.method
+    return this._fallbackOverrides.method ?? this._requestDetails.method
   }
 
   public postData(): string | null {
-    const fallbackPostData = this.fallbackOverrides.postData
+    const fallbackPostData = this._fallbackOverrides.postData
     if (fallbackPostData) {
       if (typeof fallbackPostData === 'string') return fallbackPostData
       return new TextDecoder().decode(fallbackPostData)
     }
 
-    return this.requestDetails.body ? new TextDecoder().decode(this.requestDetails.body) : null
+    return this._requestDetails.body ? new TextDecoder().decode(this._requestDetails.body) : null
   }
 
   public postDataJSON(): object | null {
@@ -108,7 +108,7 @@ export default class RouteRequest {
   }
 
   public postDataArrayBuffer(): ArrayBufferLike | null {
-    const fallbackPostData = this.fallbackOverrides.postData
+    const fallbackPostData = this._fallbackOverrides.postData
     if (fallbackPostData) {
       if (typeof fallbackPostData === 'string') {
         return new TextEncoder().encode(fallbackPostData).buffer
@@ -119,19 +119,19 @@ export default class RouteRequest {
       return fallbackPostData
     }
 
-    return this.requestDetails.body ?? null
+    return this._requestDetails.body ?? null
   }
 
   public resourceType() {
-    return this.requestDetails.resourceType
+    return this._requestDetails.resourceType
   }
 
   public serviceWorker() {
-    if (this.requestDetails.serviceWorker === null) return null
-    return this.requestDetails.serviceWorker as HostHandle<playwright.Worker>
+    if (this._requestDetails.serviceWorker === null) return null
+    return this._requestDetails.serviceWorker as HostHandle<playwright.Worker>
   }
 
   public url() {
-    return this.fallbackOverrides.url ?? this.requestDetails.url
+    return this._fallbackOverrides.url ?? this._requestDetails.url
   }
 }

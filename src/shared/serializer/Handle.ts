@@ -7,7 +7,7 @@ export abstract class Handle<_T = unknown> {
   /** @internal */
   public constructor(
     /** @internal */
-    public readonly id: string,
+    public readonly _id: string,
   ) {}
 }
 
@@ -21,6 +21,6 @@ export class PendingHandle<_T = unknown> {
   /** @internal */
   public constructor(
     /** @internal */
-    public readonly id: string,
+    public readonly _id: string,
   ) {}
 }

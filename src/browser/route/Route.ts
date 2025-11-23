@@ -12,28 +12,28 @@ export interface FallbackOverrides {
 export default class Route {
   /** @internal */
   public constructor(
-    private readonly id: string,
-    private readonly req: RouteRequest,
-    private readonly rpc: BridgeClientRpc,
+    private readonly _id: string,
+    private readonly _req: RouteRequest,
+    private readonly _rpc: BridgeClientRpc,
   ) {}
 
   /** @internal */
-  protected handleResolve: ((done: boolean) => void) | null = null
+  protected _handleResolve: ((done: boolean) => void) | null = null
 
   /**
    * @internal
    */
-  public startHandling() {
+  public _startHandling() {
     return new Promise<boolean>((resolve) => {
-      this.handleResolve = (done) => {
-        this.handleResolve = null
+      this._handleResolve = (done) => {
+        this._handleResolve = null
         resolve(done)
       }
     })
   }
 
-  private assertNotHandled(): asserts this is { handleResolve: object } {
-    if (this.handleResolve === null) {
+  private _assertNotHandled(): asserts this is { _handleResolve: object } {
+    if (this._handleResolve === null) {
       throw new Error('Route is already handled!')
     }
   }
@@ -41,16 +41,16 @@ export default class Route {
   /**
    * @internal
    */
-  public hasTriedButFailed = false
+  public _hasTriedButFailed = false
 
-  private async tryHandle(handleFn: () => Promise<void>) {
-    this.assertNotHandled()
+  private async _tryHandle(handleFn: () => Promise<void>) {
+    this._assertNotHandled()
     try {
       await handleFn()
-      this.handleResolve(true)
+      this._handleResolve(true)
     }
     catch (e) {
-      this.hasTriedButFailed = true
+      this._hasTriedButFailed = true
       throw e
     }
   }
@@ -58,14 +58,14 @@ export default class Route {
   /**
    * @internal
    */
-  public async innerContinue() {
+  public async _innerContinue() {
     const {
       postData,
       headers,
       method,
       url,
-    } = this.req.fallbackOverridesForContinue()
-    await this.rpc.routeContinue(this.id, {
+    } = this._req._fallbackOverridesForContinue()
+    await this._rpc.routeContinue(this._id, {
       headers,
       method,
       postData,
@@ -77,23 +77,23 @@ export default class Route {
   // Intentional async to match playwright's API and retain future compatibility
   // eslint-disable-next-line @typescript-eslint/require-await
   public async fallback(options?: FallbackOverrides) {
-    this.assertNotHandled()
-    this.req.applyFallbackOverrides(options)
-    this.handleResolve(false)
+    this._assertNotHandled()
+    this._req._applyFallbackOverrides(options)
+    this._handleResolve(false)
   }
 
   @hideInternals
   public async abort(errorCode?: string) {
-    await this.tryHandle(() => (
-      this.rpc.routeAbort(this.id, errorCode)
+    await this._tryHandle(() => (
+      this._rpc.routeAbort(this._id, errorCode)
     ))
   }
 
   @hideInternals
   public async continue(options?: FallbackOverrides) {
-    await this.tryHandle(async () => {
-      this.req.applyFallbackOverrides(options)
-      await this.innerContinue()
+    await this._tryHandle(async () => {
+      this._req._applyFallbackOverrides(options)
+      await this._innerContinue()
     })
   }
 
@@ -115,7 +115,7 @@ export default class Route {
     response?: Response
     status?: number
   } = {}) {
-    await this.tryHandle(async () => {
+    await this._tryHandle(async () => {
       let fulfillBody
       if (json !== undefined) {
         if (body !== undefined) {
@@ -151,7 +151,7 @@ export default class Route {
         }
       }
 
-      await this.rpc.routeFulfill(this.id, {
+      await this._rpc.routeFulfill(this._id, {
         body: fulfillBody,
         contentType: fulfillContentType,
         headers: fulfillHeaders,
@@ -162,6 +162,6 @@ export default class Route {
   }
 
   public request() {
-    return this.req
+    return this._req
   }
 }

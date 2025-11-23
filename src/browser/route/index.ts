@@ -66,7 +66,6 @@ const createRouteController = (rpc: BridgeClientRpc, bridgeId: string): RouteCon
     }),
     /**
      * Called by server. No need to hideInternals
-     * @internal
      */
     handleRouteRequest: async (routeId, details) => {
       const routeRequest = new RouteRequest(details)
@@ -113,7 +112,7 @@ const createRouteController = (rpc: BridgeClientRpc, bridgeId: string): RouteCon
       }
 
       // No matching handler, or every handler called fallback().
-      await route.innerContinue()
+      await route._innerContinue()
     },
   }
 }

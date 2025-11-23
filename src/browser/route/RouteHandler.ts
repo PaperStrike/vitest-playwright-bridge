@@ -16,11 +16,11 @@ export interface RouteOptions {
  * https://github.com/egoist/tsup/issues/1072
  */
 export default class RouteHandler {
-  private handledCount = 0
+  private _handledCount = 0
 
-  private readonly maxHandleCount: number
+  private readonly _maxHandleCount: number
 
-  private readonly matcher: (url: URL) => boolean
+  private readonly _matcher: (url: URL) => boolean
 
   /** @internal */
   public constructor(
@@ -28,15 +28,15 @@ export default class RouteHandler {
     public readonly handler: RouteHandlerCallback,
     options: RouteOptions = {},
   ) {
-    this.matcher = RouteHandler.createMatcher(this.url)
-    this.maxHandleCount = options.times ?? Infinity
+    this._matcher = RouteHandler._createMatcher(this.url)
+    this._maxHandleCount = options.times ?? Infinity
   }
 
   /**
    * `urlMatches` in playwright/urlMatch.ts
    * @see {@link https://github.com/microsoft/playwright/blob/14212c8728458334847c7620860156a239fb0ab8/packages/playwright-core/src/utils/isomorphic/urlMatch.ts#L93}
    */
-  private static createMatcher(url: RouteMatcher): (url: URL) => boolean {
+  private static _createMatcher(url: RouteMatcher): (url: URL) => boolean {
     if (url === '') {
       return () => true
     }
@@ -59,26 +59,26 @@ export default class RouteHandler {
    * Not "expired" to avoid handler callback errors affecting related algorithm
    */
   public willExpire() {
-    return this.handledCount + 1 >= this.maxHandleCount
+    return this._handledCount + 1 >= this._maxHandleCount
   }
 
   public matches(url: URL) {
-    return this.matcher(url)
+    return this._matcher(url)
   }
 
-  private ignoreErrors = false
+  private _ignoreErrors = false
 
-  private activeInvocationSet = new Set<{ route: Route, complete: Promise<boolean> }>()
+  private _activeInvocationSet = new Set<{ route: Route, complete: Promise<boolean> }>()
 
   public async stop(behavior: 'wait' | 'ignoreErrors') {
     if (behavior === 'ignoreErrors') {
-      this.ignoreErrors = true
+      this._ignoreErrors = true
       return
     }
 
     const waitTargets: Promise<unknown>[] = []
-    for (const invocation of this.activeInvocationSet) {
-      if (!invocation.route.hasTriedButFailed) {
+    for (const invocation of this._activeInvocationSet) {
+      if (!invocation.route._hasTriedButFailed) {
         waitTargets.push(invocation.complete)
       }
     }
@@ -87,10 +87,10 @@ export default class RouteHandler {
   }
 
   public async handle(route: Route, request: RouteRequest): Promise<boolean> {
-    this.handledCount += 1
-    const handlePromise = route.startHandling()
+    this._handledCount += 1
+    const handlePromise = route._startHandling()
     const invocation = { route, complete: handlePromise }
-    this.activeInvocationSet.add(invocation)
+    this._activeInvocationSet.add(invocation)
     try {
       const [handled] = await Promise.all([
         handlePromise,
@@ -99,13 +99,13 @@ export default class RouteHandler {
       return handled
     }
     catch (e) {
-      if (this.ignoreErrors) {
+      if (this._ignoreErrors) {
         return false
       }
       throw e
     }
     finally {
-      this.activeInvocationSet.delete(invocation)
+      this._activeInvocationSet.delete(invocation)
     }
   }
 }

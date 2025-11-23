@@ -58,6 +58,12 @@ export default defineConfig(
             varsIgnorePattern: '^_',
             ignoreRestSiblings: true,
           }],
+          '@typescript-eslint/naming-convention': ['error', {
+            selector: ['classProperty', 'classMethod', 'parameterProperty'],
+            modifiers: ['private'],
+            format: ['camelCase'],
+            leadingUnderscore: 'require',
+          }],
         },
       },
     ],
