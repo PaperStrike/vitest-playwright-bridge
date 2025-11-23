@@ -1,4 +1,4 @@
-import * as playwright from 'playwright'
+import type * as playwright from 'playwright'
 import type { BridgeHandleServerMethods, RpcImpl } from '../../shared/types'
 import { parseExpression, PendingHandle } from '../../shared/serializer'
 import { getCommonHandleIds } from '../../shared/utils'

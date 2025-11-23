@@ -1,5 +1,5 @@
 import { createBirpc } from 'birpc'
-import * as playwright from 'playwright'
+import type * as playwright from 'playwright'
 import createHandleController from './handle'
 import createRouteController from './route'
 import { deserialize, serialize, type SerializableValue } from '../../shared/serializer'

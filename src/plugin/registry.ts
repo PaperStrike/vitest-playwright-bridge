@@ -1,4 +1,4 @@
-import * as playwright from 'playwright'
+import type * as playwright from 'playwright'
 import type { PlaywrightBridgePluginOptions } from './types'
 
 const bridgeIdMap = new WeakMap<playwright.Page, string>()
