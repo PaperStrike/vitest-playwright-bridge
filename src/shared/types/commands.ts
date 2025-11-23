@@ -11,6 +11,7 @@ export interface BridgeBrowserCommands {
   __playwrightBridge_register: BridgeRegisterBrowserCommand
 }
 
+/** @internal */
 declare module 'vitest/browser' {
   interface BrowserCommands extends BridgeBrowserCommands {}
 }
