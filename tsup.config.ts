@@ -32,7 +32,7 @@ export default defineConfig([
         types: ['node'],
       },
     },
-    format: 'esm',
+    format: ['esm', 'cjs'],
     platform: 'node',
     sourcemap: true,
   },
