@@ -11,7 +11,9 @@ export interface RouteOptions {
 /**
  * For performance, the client chains multiple handlers while the server uses a single catch-all handler.
  * If matching or chaining logic grows too complex, consider switching to one-to-one handler mappings.
- * @internal
+ *
+ * This should be internal but tsup complains about missing exports so we instead marked the constructor as internal.
+ * https://github.com/egoist/tsup/issues/1072
  */
 export default class RouteHandler {
   private handledCount = 0
@@ -20,6 +22,7 @@ export default class RouteHandler {
 
   private readonly matcher: (url: URL) => boolean
 
+  /** @internal */
   public constructor(
     public readonly url: RouteMatcher,
     public readonly handler: RouteHandlerCallback,

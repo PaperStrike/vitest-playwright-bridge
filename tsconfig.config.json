@@ -8,6 +8,7 @@
   },
   "include": [
     "eslint.config.mjs",
+    "tsup.config.ts",
     "vitest.config.ts"
   ],
   "references": [
