@@ -5,6 +5,7 @@
     "source.fixAll.eslint": "explicit"
   },
   "cSpell.words": [
-    "birpc"
+    "birpc",
+    "msgpackr"
   ]
 }
