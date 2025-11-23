@@ -4,7 +4,9 @@ export abstract class Handle<_T = unknown> {
    */
   declare public readonly __ts_unique_marker: 'vite-playwright-bridge Handle'
 
+  /** @internal */
   public constructor(
+    /** @internal */
     public readonly id: string,
   ) {}
 }
@@ -16,7 +18,9 @@ export class PendingHandle<_T = unknown> {
    */
   declare public readonly __ts_unique_marker: 'vite-playwright-bridge PendingHandle'
 
+  /** @internal */
   public constructor(
+    /** @internal */
     public readonly id: string,
   ) {}
 }
