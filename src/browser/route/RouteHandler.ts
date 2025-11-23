@@ -18,13 +18,14 @@ export default class RouteHandler {
 
   private readonly maxHandleCount: number
 
-  private readonly matcher = RouteHandler.createMatcher(this.url)
+  private readonly matcher: (url: URL) => boolean
 
   public constructor(
     public readonly url: RouteMatcher,
     public readonly handler: RouteHandlerCallback,
     options: RouteOptions = {},
   ) {
+    this.matcher = RouteHandler.createMatcher(this.url)
     this.maxHandleCount = options.times ?? Infinity
   }
 
