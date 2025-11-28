@@ -30,7 +30,7 @@ const createRouteController = (
 
       const headers: Record<string, string> = {}
       for (const { name, value } of headersArray) {
-        headers[name] = headers[name] ? `${headers[name]},${value}` : value
+        headers[name] = headers[name] ? `${headers[name]}, ${value}` : value
       }
       await route.continue({ headers })
       return

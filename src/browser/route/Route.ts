@@ -147,7 +147,7 @@ export default class Route {
       if (fulfillHeaders === undefined && response) {
         fulfillHeaders = {}
         for (const [key, value] of response.headers) {
-          fulfillHeaders[key] = fulfillHeaders[key] ? `${fulfillHeaders[key]},${value}` : value
+          fulfillHeaders[key] = fulfillHeaders[key] ? `${fulfillHeaders[key]}, ${value}` : value
         }
       }
 

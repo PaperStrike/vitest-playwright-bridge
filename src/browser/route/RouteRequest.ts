@@ -39,7 +39,7 @@ export default class RouteRequest {
       for (const { name, value } of this._requestDetails.headersArray) {
         const lowerName = name.toLowerCase()
         this._cachedAllHeaders[lowerName] = this._cachedAllHeaders[lowerName]
-          ? `${this._cachedAllHeaders[lowerName]},${value}`
+          ? `${this._cachedAllHeaders[lowerName]}, ${value}`
           : value
       }
     }
