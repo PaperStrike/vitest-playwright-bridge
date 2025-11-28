@@ -18,4 +18,22 @@ describe('handle', () => {
     const passedError = await contextHandle.evaluate((_, e) => e, error)
     expect(passedError.stack).toBe('mocked stack')
   })
+
+  describe('dynamic import in evaluate', () => {
+    test('should support Node.js built-in modules', async () => {
+      const releaseName = await contextHandle.evaluate(async () => {
+        const process = await import('node:process')
+        return process.release.name
+      })
+      expect(releaseName).toBe('node')
+    })
+
+    test.fails('should support relative imports', async () => {
+      const result = await contextHandle.evaluate(async () => {
+        const { default: globToRegex } = await import('../src/shared/globToRegex')
+        return globToRegex('**')
+      })
+      expect(result).toBeInstanceOf(RegExp)
+    })
+  })
 })
