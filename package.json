@@ -46,6 +46,10 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
+  "dependencies": {
+    "estree-walker": "^3.0.3",
+    "magic-string": "^0.30.21"
+  },
   "peerDependencies": {
     "@vitest/browser-playwright": "^4.0.0",
     "playwright": "*",
@@ -56,6 +60,7 @@
     "@eslint/js": "^9.39.1",
     "@eslint/markdown": "^7.5.1",
     "@stylistic/eslint-plugin": "^5.6.1",
+    "@types/estree": "^1.0.8",
     "@types/node": "^24.10.1",
     "@vitest/browser-playwright": "^4.0.13",
     "birpc": "^2.8.0",

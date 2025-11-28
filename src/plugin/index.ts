@@ -1,3 +1,6 @@
+import type { Expression } from 'estree'
+import { walk } from 'estree-walker'
+import MagicString from 'magic-string'
 import type * as playwright from 'playwright'
 import type { Plugin } from 'vitest/config'
 import type { PlaywrightBrowserProvider } from '@vitest/browser-playwright'
@@ -63,6 +66,61 @@ export const playwrightBridge = (options?: PlaywrightBridgePluginOptions): Plugi
       }
 
       return provider
+    }
+  },
+  // Transform .evaluate()/evaluateHandle() calls with dynamic imports inside
+  // to avoid vitest wrapping the dynamic import calls, which would break them.
+  transform(code, id) {
+    if (!/\.\s*evaluate(Handle)?\s*\(/.test(code)
+      || !/\bimport\s*\(/.test(code)) {
+      return
+    }
+
+    let ast
+    try {
+      ast = this.parse(code)
+    }
+    catch {
+      return
+    }
+
+    const s = new MagicString(code)
+
+    walk(ast, {
+      enter(node) {
+        if (node.type !== 'CallExpression') return
+        if (node.callee.type !== 'MemberExpression') return
+
+        const { property } = node.callee
+        if (property.type !== 'Identifier') return
+        if (property.name !== 'evaluate' && property.name !== 'evaluateHandle') return
+
+        const firstArg = node.arguments[0] as (Expression & { start: number, end: number }) | undefined
+        if (!firstArg) return
+        if (firstArg.type !== 'ArrowFunctionExpression' && firstArg.type !== 'FunctionExpression') return
+
+        let hasDynamicImport = false as boolean
+        walk(firstArg, {
+          enter(child) {
+            if (child.type === 'ImportExpression') {
+              hasDynamicImport = true
+              this.skip()
+            }
+          },
+        })
+
+        if (hasDynamicImport) {
+          const funcCode = code.slice(firstArg.start, firstArg.end)
+          s.overwrite(firstArg.start, firstArg.end, JSON.stringify(funcCode))
+        }
+      },
+    })
+
+    if (s.hasChanged()) {
+      return {
+        code: s.toString(),
+        map: s.generateMap({ hires: 'boundary', source: id }),
+      }
     }
   },
 })

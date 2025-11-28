@@ -7,6 +7,13 @@ settings:
 importers:
 
   .:
+    dependencies:
+      estree-walker:
+        specifier: ^3.0.3
+        version: 3.0.3
+      magic-string:
+        specifier: ^0.30.21
+        version: 0.30.21
     devDependencies:
       '@eslint/compat':
         specifier: ^2.0.0
@@ -20,6 +27,9 @@ importers:
       '@stylistic/eslint-plugin':
         specifier: ^5.6.1
         version: 5.6.1(eslint@9.39.1)
+      '@types/estree':
+        specifier: ^1.0.8
+        version: 1.0.8
       '@types/node':
         specifier: ^24.10.1
         version: 24.10.1
