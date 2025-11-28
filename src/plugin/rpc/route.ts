@@ -18,9 +18,15 @@ const createRouteController = (
   const routeHandler = async (route: playwright.Route, request: playwright.Request) => {
     const headersArray = await request.headersArray()
 
-    const bypassHeaderIndex = headersArray.findIndex(h => h.name === routeBypassFetchHeader && h.value === bridgeId)
+    const bypassHeaderIndex = headersArray.findIndex(h => h.name === routeBypassFetchHeader && h.value.includes(bridgeId))
     if (bypassHeaderIndex > 0) {
-      headersArray.splice(bypassHeaderIndex, 1)
+      const bypassHeader = headersArray[bypassHeaderIndex]!
+      if (bypassHeader.value === bridgeId) {
+        headersArray.splice(bypassHeaderIndex, 1)
+      }
+      else {
+        bypassHeader.value = bypassHeader.value.split(',').filter(v => !v.includes(bridgeId)).join(',')
+      }
 
       const headers: Record<string, string> = {}
       for (const { name, value } of headersArray) {
