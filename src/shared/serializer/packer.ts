@@ -83,7 +83,7 @@ addExtension({
 
 // msgpackr’s native Error extension omits stack traces and can’t handle circular causes.
 // Our version includes stack serialization but still can’t handle Error objects that reference themselves.
-// Circular data inside `cause` (objects/Map/Set) works, yet self-referential Errors remain a known msgpackr limitation.
+// Circular data inside `cause` (objects/arrays/Map/Set) works, yet self-referential Errors remain a known msgpackr limitation.
 // See https://github.com/kriszyp/msgpackr/blob/0660ef3f23152db1f66ba1cdcd02b5de2a07a9eb/unpack.js#L1053
 const commonErrorClassNames = new Set([
   'Error',
