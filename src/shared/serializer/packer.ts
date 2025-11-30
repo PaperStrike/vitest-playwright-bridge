@@ -4,7 +4,7 @@ import type { SerializableValue } from './types'
 
 const packerOptions: Options = {
   structuredClone: true,
-  largeBigIntToString: true,
+  useBigIntExtension: true,
 }
 
 const strictPacker = new Packr({
