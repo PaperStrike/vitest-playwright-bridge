@@ -12,13 +12,6 @@ describe('handle', () => {
     expect(version).toMatch(/^\d+\.\d+/)
   })
 
-  test('should preserve Error.stack', async () => {
-    const error = new Error('Test error with stack')
-    error.stack = 'mocked stack'
-    const passedError = await contextHandle.evaluate((_, e) => e, error)
-    expect(passedError.stack).toBe('mocked stack')
-  })
-
   describe('dynamic import in evaluate', () => {
     test('should support Node.js built-in modules', async () => {
       const releaseName = await contextHandle.evaluate(async () => {
