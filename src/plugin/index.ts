@@ -8,7 +8,6 @@ import commands from './commands'
 import { getBridgeId, setOptionsForPage } from './registry'
 import { createServerRpc } from './rpc'
 import type { BridgeServerRpc, PlaywrightBridgePluginOptions } from './types'
-import assert from 'node:assert'
 
 export type { PlaywrightBridgePluginOptions }
 
@@ -86,9 +85,20 @@ export const playwrightBridge = (options?: PlaywrightBridgePluginOptions): Plugi
 
     const s = new MagicString(code)
 
-    let currEvaluateCallExpression: ESTree.CallExpression | undefined
     let currEvaluateFirstArg: ESTree.Argument | undefined
     let hasDynamicImport = false
+    const onAnyFunctionExpressionExit = (node: ESTree.ArrowFunctionExpression | ESTree.Function) => {
+      if (node === currEvaluateFirstArg) {
+        currEvaluateFirstArg = undefined
+
+        if (hasDynamicImport) {
+          hasDynamicImport = false
+          const funcCode = code.slice(node.start, node.end)
+          s.overwrite(node.start, node.end, JSON.stringify(funcCode))
+        }
+      }
+    }
+
     const visitor = new Visitor({
       'CallExpression': (node) => {
         if (node.callee.type !== 'MemberExpression') return
@@ -101,7 +111,6 @@ export const playwrightBridge = (options?: PlaywrightBridgePluginOptions): Plugi
         if (!firstArg) return
         if (firstArg.type !== 'ArrowFunctionExpression' && firstArg.type !== 'FunctionExpression') return
 
-        currEvaluateCallExpression = node
         currEvaluateFirstArg = firstArg
       },
       'ImportExpression': () => {
@@ -109,20 +118,10 @@ export const playwrightBridge = (options?: PlaywrightBridgePluginOptions): Plugi
           hasDynamicImport = true
         }
       },
-      'CallExpression:exit': (node) => {
-        if (node === currEvaluateCallExpression) {
-          assert(currEvaluateFirstArg)
-
-          if (hasDynamicImport) {
-            hasDynamicImport = false
-            const funcCode = code.slice(currEvaluateFirstArg.start, currEvaluateFirstArg.end)
-            s.overwrite(currEvaluateFirstArg.start, currEvaluateFirstArg.end, JSON.stringify(funcCode))
-          }
-
-          currEvaluateFirstArg = undefined
-        }
-      },
+      'ArrowFunctionExpression:exit': onAnyFunctionExpressionExit,
+      'FunctionExpression:exit': onAnyFunctionExpressionExit,
     })
+
     visitor.visit(ast)
 
     if (s.hasChanged()) {
