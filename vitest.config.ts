@@ -1,9 +1,13 @@
+import decorators from 'rolldown-plugin-babel-decorators'
 import { defineConfig } from 'vitest/config'
 import { playwright } from '@vitest/browser-playwright'
 import { playwrightBridge } from './src/plugin'
 
 export default defineConfig({
-  plugins: [playwrightBridge()],
+  plugins: [
+    decorators(),
+    playwrightBridge(),
+  ],
   resolve: {
     alias: {
       'vitest-playwright-bridge/browser': '/src/browser/index.ts',
@@ -22,8 +26,5 @@ export default defineConfig({
     },
     testTimeout: 5000,
     hookTimeout: 5000,
-  },
-  esbuild: {
-    target: 'es2022',
   },
 })

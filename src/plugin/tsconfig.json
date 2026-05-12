@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../../build/plugin",
-    "types": ["node", "estree"],
+    "types": ["node"],
     "tsBuildInfoFile": "../../build/.cache/plugin.tsbuildinfo"
   },
   "include": ["./"],

@@ -1,7 +1,6 @@
-import type { Expression } from 'estree'
-import { walk } from 'estree-walker'
 import MagicString from 'magic-string'
 import type * as playwright from 'playwright'
+import { Visitor, type ESTree } from 'rolldown/utils'
 import type { Plugin } from 'vitest/config'
 import type { PlaywrightBrowserProvider } from '@vitest/browser-playwright'
 import { getBridgeWebSocketPath } from '../shared/utils'
@@ -9,6 +8,7 @@ import commands from './commands'
 import { getBridgeId, setOptionsForPage } from './registry'
 import { createServerRpc } from './rpc'
 import type { BridgeServerRpc, PlaywrightBridgePluginOptions } from './types'
+import assert from 'node:assert'
 
 export type { PlaywrightBridgePluginOptions }
 
@@ -86,35 +86,44 @@ export const playwrightBridge = (options?: PlaywrightBridgePluginOptions): Plugi
 
     const s = new MagicString(code)
 
-    walk(ast, {
-      enter(node) {
-        if (node.type !== 'CallExpression') return
+    let currEvaluateCallExpression: ESTree.CallExpression | undefined
+    let currEvaluateFirstArg: ESTree.Argument | undefined
+    let hasDynamicImport = false
+    const visitor = new Visitor({
+      'CallExpression': (node) => {
         if (node.callee.type !== 'MemberExpression') return
 
         const { property } = node.callee
         if (property.type !== 'Identifier') return
         if (property.name !== 'evaluate' && property.name !== 'evaluateHandle') return
 
-        const firstArg = node.arguments[0] as (Expression & { start: number, end: number }) | undefined
+        const firstArg = node.arguments[0]
         if (!firstArg) return
         if (firstArg.type !== 'ArrowFunctionExpression' && firstArg.type !== 'FunctionExpression') return
 
-        let hasDynamicImport = false as boolean
-        walk(firstArg, {
-          enter(child) {
-            if (child.type === 'ImportExpression') {
-              hasDynamicImport = true
-              this.skip()
-            }
-          },
-        })
+        currEvaluateCallExpression = node
+        currEvaluateFirstArg = firstArg
+      },
+      'ImportExpression': () => {
+        if (currEvaluateFirstArg) {
+          hasDynamicImport = true
+        }
+      },
+      'CallExpression:exit': (node) => {
+        if (node === currEvaluateCallExpression) {
+          assert(currEvaluateFirstArg)
 
-        if (hasDynamicImport) {
-          const funcCode = code.slice(firstArg.start, firstArg.end)
-          s.overwrite(firstArg.start, firstArg.end, JSON.stringify(funcCode))
+          if (hasDynamicImport) {
+            hasDynamicImport = false
+            const funcCode = code.slice(currEvaluateFirstArg.start, currEvaluateFirstArg.end)
+            s.overwrite(currEvaluateFirstArg.start, currEvaluateFirstArg.end, JSON.stringify(funcCode))
+          }
+
+          currEvaluateFirstArg = undefined
         }
       },
     })
+    visitor.visit(ast)
 
     if (s.hasChanged()) {
       return {

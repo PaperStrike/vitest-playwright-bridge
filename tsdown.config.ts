@@ -1,3 +1,4 @@
+import decorators from 'rolldown-plugin-babel-decorators'
 import { defineConfig } from 'tsdown'
 
 export default defineConfig([
@@ -5,14 +6,11 @@ export default defineConfig([
     entry: {
       browser: 'src/browser/index.ts',
     },
+    tsconfig: 'tsconfig.build.json',
     dts: {
+      build: true,
       compilerOptions: {
         stripInternal: true,
-
-        // Workaround for tsup not supporting project references
-        // https://github.com/egoist/tsup/issues/647
-        composite: false,
-        lib: ['ESNext', 'DOM', 'DOM.Iterable'],
       },
     },
     format: 'esm',
@@ -23,15 +21,16 @@ export default defineConfig([
     entry: {
       plugin: 'src/plugin/index.ts',
     },
+    tsconfig: 'tsconfig.build.json',
     dts: {
+      build: true,
       compilerOptions: {
         stripInternal: true,
-
-        // same workaround as above
-        composite: false,
-        types: ['node'],
       },
     },
+    plugins: [
+      decorators(),
+    ],
     format: ['esm', 'cjs'],
     platform: 'node',
     sourcemap: true,
