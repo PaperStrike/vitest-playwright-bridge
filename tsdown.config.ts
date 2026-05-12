@@ -13,6 +13,9 @@ export default defineConfig([
         stripInternal: true,
       },
     },
+    plugins: [
+      decorators(),
+    ],
     format: 'esm',
     platform: 'browser',
     sourcemap: true,
