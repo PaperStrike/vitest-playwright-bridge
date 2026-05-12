@@ -20,7 +20,7 @@
     "test": "vitest run",
     "watch": "vitest --browser.headless=false",
     "clean": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\"",
-    "build": "tsup",
+    "build": "tsdown",
     "lint": "eslint .",
     "prepare": "pnpm build"
   },
@@ -56,21 +56,22 @@
     "vitest": "^4.0.0"
   },
   "devDependencies": {
-    "@eslint/compat": "^2.0.0",
-    "@eslint/js": "^9.39.2",
-    "@eslint/markdown": "^7.5.1",
-    "@stylistic/eslint-plugin": "^5.6.1",
-    "@types/estree": "^1.0.8",
-    "@types/node": "^24.10.4",
-    "@vitest/browser-playwright": "^4.0.15",
+    "@eslint/compat": "^2.1.0",
+    "@eslint/config-helpers": "^0.6.0",
+    "@eslint/js": "^10.0.1",
+    "@eslint/markdown": "^8.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "@types/estree": "^1.0.9",
+    "@types/node": "^25.6.2",
+    "@vitest/browser-playwright": "^4.1.6",
     "birpc": "^4.0.0",
-    "eslint": "^9.39.2",
-    "msgpackr": "^1.11.5",
-    "playwright": "^1.57.0",
-    "tsup": "^8.5.1",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.49.0",
-    "vitest": "^4.0.15"
+    "eslint": "^10.3.0",
+    "msgpackr": "^2.0.1",
+    "playwright": "^1.59.1",
+    "tsdown": "^0.22.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.2",
+    "vitest": "^4.1.6"
   },
   "packageManager": "pnpm@11.1.1+sha512.d1fdf5f73c617b64fa1a56a81c3c8dfe0e966e33a6010aa256b517ae77be21d93e05affc0de1a83b0e4f29d569f68b446ae8f068cd7247c0bb3df0fb4d7bdf9a"
 }

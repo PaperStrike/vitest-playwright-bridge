@@ -1,6 +1,6 @@
 import path from 'node:path'
 import { defineConfig } from 'eslint/config'
-import { includeIgnoreFile } from '@eslint/compat'
+import { includeIgnoreFile } from '@eslint/config-helpers'
 import eslint from '@eslint/js'
 import markdown from '@eslint/markdown'
 import stylistic from '@stylistic/eslint-plugin'
