@@ -26,7 +26,7 @@ const createClient = async () => {
       return routeController.handleRouteRequest(id, details)
     },
   }, {
-    post: (msg: Uint8Array) => {
+    post: (msg: Uint8Array<ArrayBuffer>) => {
       ws.send(msg)
     },
     on: (cb) => {
@@ -35,7 +35,7 @@ const createClient = async () => {
       })
     },
     serialize: (data: unknown) => serialize(data as SerializableValue),
-    deserialize: (data: Uint8Array) => deserialize(data, { createHandle }),
+    deserialize: (data: ArrayBuffer) => deserialize(data, { createHandle }),
     timeout: -1,
   })
 

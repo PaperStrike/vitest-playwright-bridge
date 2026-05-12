@@ -20,39 +20,37 @@ export type Unboxed<Arg, NewHandle extends Handle = never>
             : Arg extends Error
               ? Error
               : Arg extends Int8Array
-                ? Int8Array
+                ? Int8Array<ArrayBuffer>
                 : Arg extends Uint8Array
-                  ? Uint8Array
+                  ? Uint8Array<ArrayBuffer>
                   : Arg extends Uint8ClampedArray
-                    ? Uint8ClampedArray
+                    ? Uint8ClampedArray<ArrayBuffer>
                     : Arg extends Int16Array
-                      ? Int16Array
+                      ? Int16Array<ArrayBuffer>
                       : Arg extends Uint16Array
-                        ? Uint16Array
+                        ? Uint16Array<ArrayBuffer>
                         : Arg extends Int32Array
-                          ? Int32Array
+                          ? Int32Array<ArrayBuffer>
                           : Arg extends Uint32Array
-                            ? Uint32Array
+                            ? Uint32Array<ArrayBuffer>
                             : Arg extends Float32Array
-                              ? Float32Array
+                              ? Float32Array<ArrayBuffer>
                               : Arg extends Float64Array
-                                ? Float64Array
+                                ? Float64Array<ArrayBuffer>
                                 : Arg extends BigInt64Array
-                                  ? BigInt64Array
+                                  ? BigInt64Array<ArrayBuffer>
                                   : Arg extends BigUint64Array
-                                    ? BigUint64Array
+                                    ? BigUint64Array<ArrayBuffer>
                                     : Arg extends ArrayBufferView
-                                      ? ArrayBufferView
+                                      ? ArrayBufferView<ArrayBuffer>
                                       : Arg extends ArrayBuffer
                                         ? ArrayBuffer
-                                        : Arg extends SharedArrayBuffer
-                                          ? SharedArrayBuffer
-                                          : Arg extends Set<infer T>
-                                            ? Set<Unboxed<T, NewHandle>>
-                                            : Arg extends Map<infer K, infer V>
-                                              ? Map<Unboxed<K, NewHandle>, Unboxed<V, NewHandle>>
-                                              : Arg extends [infer A0, ...infer Rest]
-                                                ? [Unboxed<A0, NewHandle>, ...Unboxed<Rest, NewHandle>]
-                                                : Arg extends object
-                                                  ? { [Key in keyof Arg]: Unboxed<Arg[Key], NewHandle> }
-                                                  : Arg
+                                        : Arg extends Set<infer T>
+                                          ? Set<Unboxed<T, NewHandle>>
+                                          : Arg extends Map<infer K, infer V>
+                                            ? Map<Unboxed<K, NewHandle>, Unboxed<V, NewHandle>>
+                                            : Arg extends [infer A0, ...infer Rest]
+                                              ? [Unboxed<A0, NewHandle>, ...Unboxed<Rest, NewHandle>]
+                                              : Arg extends object
+                                                ? { [Key in keyof Arg]: Unboxed<Arg[Key], NewHandle> }
+                                                : Arg

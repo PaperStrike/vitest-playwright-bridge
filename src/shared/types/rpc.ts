@@ -16,11 +16,11 @@ export interface BridgeRouteServerMethods {
   continue: (requestId: string, options: {
     headers?: Record<string, string> | undefined
     method?: string | undefined
-    postData?: string | ArrayBufferLike | ArrayBufferView | undefined
+    postData?: string | ArrayBuffer | ArrayBufferView | undefined
     url?: string | undefined
   }) => void
   fulfill: (requestId: string, options: {
-    body?: string | ArrayBufferLike | ArrayBufferView | undefined
+    body?: string | ArrayBuffer | ArrayBufferView | undefined
     contentType?: string | undefined
     headers?: Record<string, string> | undefined
     path?: string | undefined

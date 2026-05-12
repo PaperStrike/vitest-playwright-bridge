@@ -76,7 +76,7 @@ const createRouteController = (
     return route
   }
 
-  const convertBody = (body: string | ArrayBufferLike | ArrayBufferView): Buffer | string => {
+  const convertBody = (body: string | ArrayBuffer | ArrayBufferView): Buffer | string => {
     if (typeof body === 'string') {
       return body
     }

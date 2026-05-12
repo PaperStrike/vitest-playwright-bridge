@@ -107,7 +107,7 @@ export default class Route {
     response,
     status,
   }: {
-    body?: string | ArrayBufferLike | ArrayBufferView | null
+    body?: string | ArrayBuffer | ArrayBufferView | null
     contentType?: string
     headers?: Record<string, string>
     json?: unknown

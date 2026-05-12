@@ -29,7 +29,7 @@ export const createServerRpc = (
       post: (msg: Buffer) => { wsRoute.send(msg) },
       on: (cb) => { wsRoute.onMessage(cb) },
       serialize: (msg: unknown) => serialize(msg as SerializableValue, { useNullFallback: true }),
-      deserialize: (buffer: Uint8Array) => deserialize(buffer, { targetMap: handleController.targetMap }),
+      deserialize: (buffer: Uint8Array<ArrayBuffer>) => deserialize(buffer, { targetMap: handleController.targetMap }),
       timeout: -1,
     },
   )

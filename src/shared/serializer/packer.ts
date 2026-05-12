@@ -27,13 +27,13 @@ export const serialize = (
   options: {
     useNullFallback?: boolean
   } = {},
-): Uint8Array => {
+): Uint8Array<ArrayBuffer> => {
   const packer = options.useNullFallback ? nullFallbackPacker : strictPacker
-  return packer.pack(value) as Uint8Array
+  return packer.pack(value) as Uint8Array<ArrayBuffer>
 }
 
 export const deserialize = (
-  buffer: Uint8Array,
+  buffer: ArrayBuffer | Uint8Array<ArrayBuffer>,
   options: {
     targetMap?: Map<string, unknown>
     createHandle?: ((id: string) => Handle)
