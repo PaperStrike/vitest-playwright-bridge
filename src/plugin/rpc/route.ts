@@ -53,7 +53,7 @@ const createRouteController = (
 
     try {
       await rpc.routeRequest(routeId, {
-        body: bodyBuffer ? bodyBuffer.buffer : undefined,
+        bodyBuffer: bodyBuffer ?? undefined,
         frame: frame ? handleController.createHandleFor(frame) : null,
         headersArray,
         isNavigationRequest: request.isNavigationRequest(),

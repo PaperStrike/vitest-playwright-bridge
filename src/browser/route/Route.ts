@@ -60,7 +60,7 @@ export default class Route {
    */
   public async _innerContinue() {
     const {
-      postData,
+      postDataBuffer,
       headers,
       method,
       url,
@@ -68,7 +68,7 @@ export default class Route {
     await this._rpc.routeContinue(this._id, {
       headers,
       method,
-      postData,
+      postData: postDataBuffer,
       url,
     })
   }
@@ -76,7 +76,7 @@ export default class Route {
   @hideInternals
   // Intentional async to match playwright's API and retain future compatibility
   // eslint-disable-next-line @typescript-eslint/require-await
-  public async fallback(options?: FallbackOverrides) {
+  public async fallback(options: FallbackOverrides = {}) {
     this._assertNotHandled()
     this._req._applyFallbackOverrides(options)
     this._handleResolve(false)
@@ -90,7 +90,7 @@ export default class Route {
   }
 
   @hideInternals
-  public async continue(options?: FallbackOverrides) {
+  public async continue(options: FallbackOverrides = {}) {
     await this._tryHandle(async () => {
       this._req._applyFallbackOverrides(options)
       await this._innerContinue()

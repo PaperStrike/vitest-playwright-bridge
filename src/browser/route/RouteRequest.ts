@@ -4,6 +4,27 @@ import type { Unboxed } from '../../shared/serializer'
 import HostHandle from '../handle'
 import type { FallbackOverrides } from './Route'
 
+interface SerializedFallbackOverrides {
+  url?: string
+  method?: string
+  headers?: Record<string, string>
+  postDataBuffer?: Uint8Array
+}
+
+const convertPostData = (postData: string | ArrayBuffer | ArrayBufferView): Uint8Array => {
+  if (typeof postData === 'string') {
+    return new TextEncoder().encode(postData)
+  }
+  else if (ArrayBuffer.isView(postData)) {
+    return new Uint8Array(postData.buffer, postData.byteOffset, postData.byteLength)
+  }
+  else if (postData instanceof ArrayBuffer) {
+    return new Uint8Array(postData)
+  }
+
+  throw new Error('Unsupported postData type')
+}
+
 export default class RouteRequest {
   /** @internal */
   public constructor(
@@ -11,13 +32,18 @@ export default class RouteRequest {
   ) {
   }
 
-  private _fallbackOverrides: FallbackOverrides = {}
+  private _fallbackOverrides: SerializedFallbackOverrides = {}
 
   /**
    * @internal
    */
-  public _applyFallbackOverrides(overrides?: FallbackOverrides) {
-    this._fallbackOverrides = { ...this._fallbackOverrides, ...overrides }
+  public _applyFallbackOverrides(overrides: FallbackOverrides) {
+    const { postData, ...restOverrides } = overrides
+    this._fallbackOverrides = { ...this._fallbackOverrides, ...restOverrides }
+
+    if (postData !== undefined) {
+      this._fallbackOverrides.postDataBuffer = convertPostData(postData)
+    }
   }
 
   /**
@@ -76,13 +102,7 @@ export default class RouteRequest {
   }
 
   public postData(): string | null {
-    const fallbackPostData = this._fallbackOverrides.postData
-    if (fallbackPostData) {
-      if (typeof fallbackPostData === 'string') return fallbackPostData
-      return new TextDecoder().decode(fallbackPostData)
-    }
-
-    return this._requestDetails.body ? new TextDecoder().decode(this._requestDetails.body) : null
+    return new TextDecoder().decode(this._fallbackOverrides.postDataBuffer ?? this._requestDetails.bodyBuffer) || null
   }
 
   public postDataJSON(): object | null {
@@ -107,19 +127,8 @@ export default class RouteRequest {
     }
   }
 
-  public postDataArrayBuffer(): ArrayBufferLike | null {
-    const fallbackPostData = this._fallbackOverrides.postData
-    if (fallbackPostData) {
-      if (typeof fallbackPostData === 'string') {
-        return new TextEncoder().encode(fallbackPostData).buffer
-      }
-      if (ArrayBuffer.isView(fallbackPostData)) {
-        return fallbackPostData.buffer
-      }
-      return fallbackPostData
-    }
-
-    return this._requestDetails.body ?? null
+  public postDataBuffer(): Uint8Array | null {
+    return this._fallbackOverrides.postDataBuffer ?? this._requestDetails.bodyBuffer ?? null
   }
 
   public resourceType() {

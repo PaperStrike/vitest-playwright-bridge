@@ -36,7 +36,7 @@ export type BridgeServerMethods
   }
 
 export interface BridgeRouteClientRequestDetails {
-  body?: ArrayBuffer | undefined
+  bodyBuffer?: Uint8Array<ArrayBuffer> | undefined
   frame: PendingHandle<playwright.Frame> | null
   headersArray: { name: string, value: string }[]
   isNavigationRequest: boolean
